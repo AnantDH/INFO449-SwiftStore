@@ -66,4 +66,60 @@ TOTAL: $7.97
 """
         XCTAssertEqual(expectedReceipt, receipt.output())
     }
+
+/* MY TESTS START HERE */
+    
+    func testAddingOneItem() {
+        let item = Item(name: "Organic Mango", priceEach: 120)
+        register.scan(item)
+        
+        XCTAssertEqual(120, register.subtotal())
+        let receipt = register.total()
+        
+        let expectedReceipt = """
+Receipt:
+Organic Mango: $1.20
+------------------
+TOTAL: $1.20
+"""
+        XCTAssertEqual(expectedReceipt, receipt.output())
+    }
+    
+    func testEmptyReceipt() {
+        XCTAssertEqual(0, register.subtotal())
+        let receipt = register.total()
+        XCTAssertEqual(0, receipt.total())
+        XCTAssertEqual(0, receipt.items().count)
+        let expectedReceipt = """
+Receipt:
+------------------
+TOTAL: $0.00
+"""
+        XCTAssertEqual(expectedReceipt, receipt.output())
+    }
+    
+    func testScanningDecimals() {
+        let item1 = Item(name: "Apple", priceEach: 97)
+        let item2 = Item(name: "Onion", priceEach: 121)
+        register.scan(item1)
+        XCTAssertEqual(97, register.subtotal())
+        register.scan(item2)
+        XCTAssertEqual(218, register.subtotal())
+    }
+    
+    func testTotalClearsReceipt() {
+        let item1 = Item(name: "Almonds", priceEach: 425)
+        let item2 = Item(name: "Parmesan Cheese", priceEach: 650)
+        register.scan(item1)
+        register.scan(item2)
+        XCTAssertEqual(1075, register.subtotal())
+        let _ = register.total()
+        XCTAssertEqual(0, register.subtotal())
+    }
+    
+    func testItemsStoringCorrect() {
+        let item = Item(name: "Avocado", priceEach: 89)
+        XCTAssertEqual("Avocado", item.name)
+        XCTAssertEqual(89, item.priceEach)
+    }
 }
